@@ -81,39 +81,55 @@
     </div>
   </div>
 
-  <script>
-    const display = document.getElementById("display");
-    let timer = null;
-    let startTime = 0;
-    let elapsedTime = 0;
-    let isRunning = false;
+<script>
+  const display = document.getElementById("display");
+
+  let startTime = 0;
+  let elapsedTime = 0;
+  let isRunning = false;
+  let animationId = null;
 
   function start() {
-  if (!isRunning) {
-    startTime = performance.now() - elapsedTime;
-    isRunning = true;
-    requestAnimationFrame(update);
+    if (!isRunning) {
+      startTime = performance.now() - elapsedTime;
+      isRunning = true;
+      animationId = requestAnimationFrame(update);
+    }
   }
-}
 
-function update(timestamp) {
-  if (!isRunning) return;
+  function stop() {
+    if (isRunning) {
+      isRunning = false;
+      cancelAnimationFrame(animationId);
+    }
+  }
 
-  elapsedTime = timestamp - startTime;
+  function reset() {
+    stop();
+    elapsedTime = 0;
+    display.textContent = "00:00:00:00";
+  }
 
-  let hours = Math.floor(elapsedTime / 3600000);
-  let minutes = Math.floor((elapsedTime / 60000) % 60);
-  let seconds = Math.floor((elapsedTime / 1000) % 60);
-  let millis = Math.floor((elapsedTime % 1000) / 10);
+  function update(timestamp) {
+    if (!isRunning) return;
 
-  display.textContent =
-    `${String(hours).padStart(2,"0")}:` +
-    `${String(minutes).padStart(2,"0")}:` +
-    `${String(seconds).padStart(2,"0")}:` +
-    `${String(millis).padStart(2,"0")}`;
+    elapsedTime = timestamp - startTime;
 
-  requestAnimationFrame(update);
-}
+    let hours = Math.floor(elapsedTime / 3600000);
+    let minutes = Math.floor((elapsedTime / 60000) % 60);
+    let seconds = Math.floor((elapsedTime / 1000) % 60);
+    let millis = Math.floor((elapsedTime % 1000) / 10);
+
+    display.textContent =
+      `${String(hours).padStart(2,"0")}:` +
+      `${String(minutes).padStart(2,"0")}:` +
+      `${String(seconds).padStart(2,"0")}:` +
+      `${String(millis).padStart(2,"0")}`;
+
+    animationId = requestAnimationFrame(update);
+  }
+</script>
+
 
     
 
